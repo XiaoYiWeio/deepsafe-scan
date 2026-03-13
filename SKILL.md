@@ -39,60 +39,58 @@ Optionally uses **LLM-enhanced semantic analysis** for deeper skill code inspect
 
 ## How to Run
 
-### Full scan (all 4 modules)
+**IMPORTANT: Always use `--open` flag by default.** This generates an HTML report and auto-opens it in the user's browser — this is the expected default experience.
+
+### Default scan (recommended — always use this unless user asks otherwise)
 
 ```bash
-python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --gateway-url http://127.0.0.1:PORT --gateway-token YOUR_TOKEN
+python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --open
 ```
+
+This auto-reads gateway config from `openclaw.json`, runs all 4 modules, generates a full HTML report, saves it to `~/.openclaw/deepsafe/reports/`, and opens it in the browser. No extra flags needed.
 
 ### Scan specific modules only
 
 ```bash
-python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --modules posture,skill
-python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --modules memory
-python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --modules model --gateway-url http://127.0.0.1:PORT --gateway-token TOKEN
+python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --modules posture,skill --open
+python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --modules memory --open
+python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --modules model --open
 ```
 
 ### Static-only scan (no LLM, no model probes)
 
 ```bash
-python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --modules posture,skill,memory --no-llm
+python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --modules posture,skill,memory --no-llm --open
 ```
 
 ### Profile options
 
 ```bash
-# Quick scan (small probe datasets, fast)
-python3 {baseDir}/scripts/scan.py --profile quick --gateway-url ... --gateway-token ...
-
-# Standard scan (balanced coverage and speed)
-python3 {baseDir}/scripts/scan.py --profile standard --gateway-url ... --gateway-token ...
+# Quick scan (small probe datasets, fast) — default
+python3 {baseDir}/scripts/scan.py --profile quick --open
 
 # Full comprehensive scan (complete datasets, thorough)
-python3 {baseDir}/scripts/scan.py --profile full --gateway-url ... --gateway-token ...
+python3 {baseDir}/scripts/scan.py --profile full --open
 ```
 
-### Output options
+### Output to chat instead of browser (only if user specifically asks)
 
 ```bash
-# JSON output (default)
+# JSON output to stdout
 python3 {baseDir}/scripts/scan.py --format json
 
-# Markdown summary
+# Markdown summary to stdout
 python3 {baseDir}/scripts/scan.py --format markdown
-
-# HTML report with sidebar, SVG gauges, and severity breakdown
-python3 {baseDir}/scripts/scan.py --format html --output /tmp/deepsafe-report.html
 ```
 
 ### Cache control
 
 ```bash
 # Reports are cached for 7 days by default (by fingerprint)
-python3 {baseDir}/scripts/scan.py --ttl-days 3
+python3 {baseDir}/scripts/scan.py --ttl-days 3 --open
 
 # Force fresh scan (skip cache)
-python3 {baseDir}/scripts/scan.py --no-cache
+python3 {baseDir}/scripts/scan.py --no-cache --open
 ```
 
 ## Interpreting Results

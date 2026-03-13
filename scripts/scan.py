@@ -1208,6 +1208,7 @@ def main():
                         help="Cache TTL in days (default: 7, 0 = no cache)")
     parser.add_argument("--no-cache", action="store_true", help="Skip cache entirely")
     parser.add_argument("--no-llm", action="store_true", help="Skip LLM-enhanced analysis")
+    parser.add_argument("--open", action="store_true", help="Auto-open HTML report in browser after generation")
     parser.add_argument("--debug", action="store_true", help="Print debug info to stderr")
     args = parser.parse_args()
 
@@ -1248,18 +1249,39 @@ def main():
         if cached:
             if args.debug:
                 print(f"[cache] HIT — using cached report (fingerprint={cache_fp[:12]}...)", file=sys.stderr)
-            if args.format == "json":
+            cache_fmt = "html" if args.open else args.format
+            if cache_fmt == "json":
                 output = json.dumps(cached, indent=2, ensure_ascii=False)
-            elif args.format == "markdown":
+            elif cache_fmt == "markdown":
                 output = generate_markdown_report(
                     _rebuild_modules(cached), cached.get("total_score", 0))
             else:
                 output = generate_html_report(
                     _rebuild_modules(cached), cached.get("total_score", 0))
-            if args.output:
-                with open(args.output, "w", encoding="utf-8") as f:
+
+            cache_output_path = args.output
+            if args.open and not cache_output_path:
+                report_dir = os.path.join(openclaw_root, "deepsafe", "reports")
+                os.makedirs(report_dir, exist_ok=True)
+                ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+                cache_output_path = os.path.join(report_dir, f"deepsafe-{ts}.html")
+
+            if cache_output_path:
+                os.makedirs(os.path.dirname(os.path.abspath(cache_output_path)), exist_ok=True)
+                with open(cache_output_path, "w", encoding="utf-8") as f:
                     f.write(output)
-                print(f"Report saved to {args.output} (cached)", file=sys.stderr)
+                print(f"Report saved to {cache_output_path} (cached)", file=sys.stderr)
+                if args.open and cache_fmt == "html":
+                    import platform
+                    try:
+                        system = platform.system()
+                        if system == "Darwin":
+                            subprocess.Popen(["open", cache_output_path])
+                        elif system == "Linux":
+                            subprocess.Popen(["xdg-open", cache_output_path])
+                        print(f"Opened report in browser.", file=sys.stderr)
+                    except Exception:
+                        print(f"Could not auto-open. Open manually: {cache_output_path}", file=sys.stderr)
             else:
                 print(output)
             return
@@ -1304,24 +1326,48 @@ def main():
         contributions.append(25)
     total_score = sum(contributions)
 
-    if args.format == "markdown":
+    # Auto-set format to html and generate output path when --open is used
+    fmt = args.format
+    output_path = args.output
+    if args.open:
+        fmt = "html"
+        if not output_path:
+            report_dir = os.path.join(openclaw_root, "deepsafe", "reports")
+            os.makedirs(report_dir, exist_ok=True)
+            ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+            output_path = os.path.join(report_dir, f"deepsafe-{ts}.html")
+
+    if fmt == "markdown":
         output = generate_markdown_report(modules, total_score)
-    elif args.format == "html":
+    elif fmt == "html":
         output = generate_html_report(modules, total_score)
     else:
         report = generate_json_report(modules, total_score)
         output = json.dumps(report, indent=2, ensure_ascii=False)
 
-    if args.output:
-        os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
-        with open(args.output, "w", encoding="utf-8") as f:
+    if output_path:
+        os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as f:
             f.write(output)
-        print(f"Report saved to {args.output}", file=sys.stderr)
+        print(f"Report saved to {output_path}", file=sys.stderr)
 
-        # Save cache
         if cache_fp and not args.no_cache:
             json_report = generate_json_report(modules, total_score)
-            save_cache(cache_dir, cache_fp, json_report, os.path.abspath(args.output))
+            save_cache(cache_dir, cache_fp, json_report, os.path.abspath(output_path))
+
+        if args.open and fmt == "html":
+            import platform
+            system = platform.system()
+            try:
+                if system == "Darwin":
+                    subprocess.Popen(["open", output_path])
+                elif system == "Linux":
+                    subprocess.Popen(["xdg-open", output_path])
+                elif system == "Windows":
+                    os.startfile(output_path)
+                print(f"Opened report in browser.", file=sys.stderr)
+            except Exception:
+                print(f"Could not auto-open. Open manually: {output_path}", file=sys.stderr)
     else:
         print(output)
         if cache_fp and not args.no_cache:
