@@ -21,6 +21,12 @@ from typing import Optional
 from urllib.error import HTTPError, URLError
 from urllib import request as urllib_request
 
+try:
+    from html_template import generate_full_html_report as _full_html_report
+    _HAS_FULL_HTML = True
+except ImportError:
+    _HAS_FULL_HTML = False
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Data types
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1256,8 +1262,13 @@ def main():
                 output = generate_markdown_report(
                     _rebuild_modules(cached), cached.get("total_score", 0))
             else:
-                output = generate_html_report(
-                    _rebuild_modules(cached), cached.get("total_score", 0))
+                _cached_mods = _rebuild_modules(cached)
+                _cached_score = cached.get("total_score", 0)
+                _cached_at = cached.get("generated_at", "")
+                if _HAS_FULL_HTML:
+                    output = _full_html_report(_cached_mods, _cached_score, _cached_at)
+                else:
+                    output = generate_html_report(_cached_mods, _cached_score)
 
             cache_output_path = args.output
             if args.open and not cache_output_path:
@@ -1340,7 +1351,10 @@ def main():
     if fmt == "markdown":
         output = generate_markdown_report(modules, total_score)
     elif fmt == "html":
-        output = generate_html_report(modules, total_score)
+        if _HAS_FULL_HTML:
+            output = _full_html_report(modules, total_score)
+        else:
+            output = generate_html_report(modules, total_score)
     else:
         report = generate_json_report(modules, total_score)
         output = json.dumps(report, indent=2, ensure_ascii=False)
