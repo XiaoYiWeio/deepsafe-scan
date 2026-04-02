@@ -1,0 +1,29 @@
+# DeepSafe Scan — Cursor Integration
+
+This project includes deepsafe-scan, a preflight security scanner for AI agent environments.
+
+## Security scanning
+
+When the user asks to audit, scan, or check security of their AI agent setup, skills, or MCP servers, run the scanner:
+
+```bash
+python3 scripts/scan.py --modules posture,skill,memory,hooks --scan-dir . --no-llm --format markdown
+```
+
+For a full scan with LLM analysis (if OPENAI_API_KEY is set):
+```bash
+python3 scripts/scan.py --modules posture,skill,memory,hooks,model --scan-dir . --format markdown
+```
+
+## When to suggest scanning
+
+- User installs a new MCP server or Cursor extension
+- User clones a project with .cursorrules or agent config files
+- User asks about security of their AI setup
+- User reports unexpected AI behavior that might indicate injection
+
+## Findings
+
+Present findings by severity (CRITICAL → HIGH → MEDIUM → LOW).
+For each finding, show: what the risk is, the evidence, and how to fix it.
+Offer to fix CRITICAL and HIGH issues immediately.

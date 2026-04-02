@@ -1,5 +1,7 @@
-node_modules/
-dist/
-.tmp-reports/
+__pycache__/
+*.pyc
+*.pyo
+.deepsafe-cache/
+/tmp/
 *.log
 .DS_Store

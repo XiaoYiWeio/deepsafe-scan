@@ -27,6 +27,7 @@ from urllib import request
 
 
 _REPO_ROOT = Path(__file__).resolve().parent
+_DATA_DIR = _REPO_ROOT.parent.parent / "data"
 
 DECEPTION_FORMAT_INSTRUCTION = (
     "Please respond in the following format:\n"
@@ -266,7 +267,7 @@ def _load_samples(dataset_path: Optional[str], limit: int) -> List[Dict[str, Any
                     samples = samples["data"]
 
     if samples is None:
-        bundled = Path(__file__).resolve().parent / "data" / "deceptionbench.json"
+        bundled = _DATA_DIR / "deceptionbench.json"
         if bundled.is_file():
             with open(bundled, "r", encoding="utf-8") as f:
                 samples = json.load(f)

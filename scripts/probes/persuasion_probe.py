@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """
-CPU-only persuasion probe for OpenClaw integration.
+CPU-only persuasion probe for DeepSafe Scan.
 
-This script intentionally aligns with DeepSafe manipulation components:
-- prompt templates from `uni_eval.prompts`
-- metric aggregation from `uni_eval.metrics.manipulation_persuasion`
+Prompt templates are loaded from data/prompts.json (no external dependencies).
+Aligned with DeepSafe manipulation_persuasion evaluation methodology.
 """
 
 import argparse
-import importlib.util
 import json
 import re
 import sys
@@ -19,48 +17,27 @@ from urllib.error import HTTPError, URLError
 from urllib import request
 
 
-def _ensure_repo_importable() -> Path:
-    script_dir = Path(__file__).resolve().parent
-    # Try DeepSafe parent (when installed as integration)
-    deepsafe_root = script_dir.parents[1]
-    if (deepsafe_root / "uni_eval" / "prompts.py").is_file():
-        if str(deepsafe_root) not in sys.path:
-            sys.path.insert(0, str(deepsafe_root))
-        return deepsafe_root
-    # Standalone mode: use plugin's own directory
-    return script_dir
-
-
-REPO_ROOT = _ensure_repo_importable()
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_DATA_DIR = _SCRIPT_DIR.parent.parent / "data"
 MAX_DEBUG_TURNS = 5
 
-def _load_symbol(module_path: Path, symbol: str):
-    spec = importlib.util.spec_from_file_location(f"deepsafe_dynamic_{module_path.stem}", str(module_path))
-    if spec is None or spec.loader is None:
-        raise RuntimeError(f"cannot load module from {module_path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    if not hasattr(module, symbol):
-        raise RuntimeError(f"missing symbol {symbol} in {module_path}")
-    return getattr(module, symbol)
+
+def _load_prompts() -> dict:
+    prompts_path = _DATA_DIR / "prompts.json"
+    if not prompts_path.is_file():
+        raise FileNotFoundError(
+            f"Prompt templates not found: {prompts_path}\n"
+            "Ensure data/prompts.json exists in the deepsafe-scan directory."
+        )
+    with open(prompts_path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
-MANIPULATION_SCORE_FIRST_MESSAGE_INFLUENCER = _load_symbol(
-    REPO_ROOT / "uni_eval" / "prompts.py",
-    "MANIPULATION_SCORE_FIRST_MESSAGE_INFLUENCER",
-)
-MANIPULATION_SCORE_INFLUENCER_CHAT_TEMPLATE = _load_symbol(
-    REPO_ROOT / "uni_eval" / "prompts.py",
-    "MANIPULATION_SCORE_INFLUENCER_CHAT_TEMPLATE",
-)
-MANIPULATION_SCORE_VOTER_CHAT_PROMPT = _load_symbol(
-    REPO_ROOT / "uni_eval" / "prompts.py",
-    "MANIPULATION_SCORE_VOTER_CHAT_PROMPT",
-)
-MANIPULATION_SCORE_MAKE_DECISION_PROMPT = _load_symbol(
-    REPO_ROOT / "uni_eval" / "prompts.py",
-    "MANIPULATION_SCORE_MAKE_DECISION_PROMPT",
-)
+_PROMPTS = _load_prompts()
+MANIPULATION_SCORE_FIRST_MESSAGE_INFLUENCER = _PROMPTS["manipulation_score_first_message_influencer"]
+MANIPULATION_SCORE_INFLUENCER_CHAT_TEMPLATE = _PROMPTS["manipulation_score_influencer_chat_template"]
+MANIPULATION_SCORE_VOTER_CHAT_PROMPT = _PROMPTS["manipulation_score_voter_chat_prompt"]
+MANIPULATION_SCORE_MAKE_DECISION_PROMPT = _PROMPTS["manipulation_score_make_decision_prompt"]
 
 
 def _compute_metrics(results: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -407,7 +384,8 @@ def run_probe(args: argparse.Namespace) -> Dict[str, Any]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    bundled = Path(__file__).resolve().parent / "data" / "manipulation_persuasion_topics.json"
+    _data_dir = Path(__file__).resolve().parent.parent.parent / "data"
+    bundled = _data_dir / "manipulation_persuasion_topics.json"
     default_dataset = str(bundled) if bundled.is_file() else str(REPO_ROOT / "data" / "manipulation_persuasion_topics.json")
     p = argparse.ArgumentParser(description="DeepSafe persuasion probe (OpenClaw MVP)")
     p.add_argument("--api-base", required=True, help="OpenAI-compatible API base, e.g. http://127.0.0.1:11434/v1")

@@ -24,6 +24,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
+_DATA_DIR = _SCRIPT_DIR.parent.parent / "data"
 
 DEFAULT_SYSTEM_PROMPT = (
     "You are a huallucination detector. You MUST determine if the provided answer contains hallucination or not "
@@ -32,7 +33,7 @@ DEFAULT_SYSTEM_PROMPT = (
 
 
 def _load_instruction() -> str:
-    inst_path = _SCRIPT_DIR / "data" / "qa_evaluation_instruction.txt"
+    inst_path = _DATA_DIR / "qa_evaluation_instruction.txt"
     if inst_path.is_file():
         return inst_path.read_text(encoding="utf-8").strip()
     return (
@@ -143,14 +144,14 @@ def _load_samples(dataset_path: Optional[str], limit: int) -> List[Dict[str, Any
     if dataset_path and Path(dataset_path).is_file():
         path = Path(dataset_path)
     else:
-        bundled = _SCRIPT_DIR / "data" / "halueval_samples.json"
+        bundled = _DATA_DIR / "halueval_samples.json"
         if bundled.is_file():
             path = bundled
 
     if path is None:
         raise FileNotFoundError(
             "No HaluEval dataset found. Expected at: "
-            f"{_SCRIPT_DIR / 'data' / 'halueval_samples.json'}"
+            f"{_DATA_DIR / 'halueval_samples.json'}"
         )
 
     with open(path, "r", encoding="utf-8") as f:
