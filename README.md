@@ -11,12 +11,21 @@
 <p align="center">
   <a href="https://python.org"><img src="https://img.shields.io/badge/python-3.9%2B-blue.svg" alt="Python"></a>
   <a href="#zero-dependencies"><img src="https://img.shields.io/badge/deps-zero-green.svg" alt="Zero dependencies"></a>
-  <a href="#platform-support"><img src="https://img.shields.io/badge/works%20with-OpenClaw%20%7C%20Claude%20Code%20%7C%20Cursor%20%7C%20Codex-blueviolet.svg" alt="Platforms"></a>
   <a href="https://clawhub.ai"><img src="https://img.shields.io/badge/ClawHub-deepsafe--scan-orange.svg" alt="ClawHub"></a>
 </p>
 
 <p align="center">
   <em>Scan before you run. Protect your AI agent environment from secrets leaks, prompt injection, and hooks backdoors — in one command.</em>
+</p>
+
+---
+
+<p align="center">
+  <strong>Works with:</strong>&nbsp;&nbsp;&nbsp;
+  <img src="docs/openclaw.svg" alt="OpenClaw" width="48" valign="middle">&nbsp;<strong>OpenClaw</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/claudecode-color.svg" alt="Claude Code" width="40" valign="middle">&nbsp;<strong>Claude Code</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/cursor.svg" alt="Cursor" width="40" valign="middle">&nbsp;<strong>Cursor</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/codex-color.svg" alt="Codex" width="40" valign="middle">&nbsp;<strong>Codex</strong>
 </p>
 
 ---
