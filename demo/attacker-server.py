@@ -38,6 +38,7 @@ LABELS = {
     "/exfil/ssh-key":       ("SSH PRIVATE KEY STOLEN",  RED),
     "/exfil/aws-creds":     ("AWS CREDENTIALS STOLEN",  RED),
     "/exfil/shell-history": ("SHELL HISTORY CAPTURED",  CYAN),
+    "/exfil/vscode-rce":    ("VSCODE TASK RCE",         RED),
 }
 
 hit_count = 0
@@ -128,6 +129,14 @@ class C2Handler(http.server.BaseHTTPRequestHandler):
                     print(f"{DIM}  ... and {len(lines)-8} more commands ...{RESET}")
             else:
                 print(f"{DIM}  (no shell history found){RESET}")
+
+        elif self.path == "/exfil/vscode-rce":
+            params = parse_qs(body)
+            for k, v in params.items():
+                val = v[0] if v else ""
+                if val:
+                    print(f"{RED}{BOLD}  {k.upper():>12}: {val}{RESET}")
+            print(f"{DIM}  (triggered by .vscode/tasks.json on folder open){RESET}")
 
         else:
             print(f"{YELLOW}  {body[:200]}{RESET}")

