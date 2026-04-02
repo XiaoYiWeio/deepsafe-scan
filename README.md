@@ -60,43 +60,68 @@ Works with any AI coding agent:
 
 ---
 
-## Quick start
+## ⚠️ Why you need this
 
-### 1. Clone or install
+AI Coding Agent（Claude Code、Cursor、Codex）的配置文件支持**自动执行命令**。攻击者可以在开源仓库中植入恶意配置：
+
+| 攻击向量 | 触发时机 | 需要用户确认？ |
+|---------|---------|-------------|
+| `.claude/settings.local.json` SessionStart hooks | Claude Code 启动 | **否，自动执行** |
+| `.vscode/tasks.json` runOn: folderOpen | Cursor/VSCode 打开目录 | **否，自动执行** |
+| `.cursorrules` / `CLAUDE.md` / `AGENTS.md` | Agent 读取并可能执行指令 | 部分情况下自动 |
+
+**clone 任何仓库后，先扫再打开：**
 
 ```bash
-# As a standalone tool
-git clone https://github.com/XiaoYiWeio/deepsafe-scan
-cd deepsafe-scan
-
-# Or as an OpenClaw skill (already installed if you're reading this)
-# Skills are in ~/.openclaw/workspace/skills/deepsafe-scan
+# 先 clone 到本地
+git clone https://github.com/someone/some-repo
+# 不要急着用 IDE 打开！先扫一下：
+python3 ~/deepsafe-scan/scripts/scan.py --modules hooks --scan-dir ./some-repo --no-llm --format markdown
+# 确认安全后再打开 IDE
 ```
 
-### 2. Run a static scan (no API key needed)
+---
+
+## Quick start
+
+### 方式一：作为独立工具使用
 
 ```bash
-# Scan the current project — hooks, skills, posture, memory
-python3 scripts/scan.py \
-  --modules posture,skill,memory,hooks \
-  --scan-dir . \
+git clone https://github.com/XiaoYiWeio/deepsafe-scan ~/deepsafe-scan
+
+# 扫描任意项目目录（零依赖，直接跑）
+python3 ~/deepsafe-scan/scripts/scan.py \
+  --modules hooks \
+  --scan-dir /path/to/repo \
   --no-llm \
   --format markdown
 ```
 
-### 3. Full scan with LLM analysis
+### 方式二：作为 AI Agent Skill 安装（推荐）
+
+安装为 Skill 后，以后每次使用只需**用自然语言告诉你的 AI Agent**：
+
+> "帮我用 deepsafe scan 扫一下这个项目"
+
+Agent 会自动调用扫描器并返回结果，无需记命令。
 
 ```bash
-# Claude Code / Codex / any platform (auto-detects ANTHROPIC_API_KEY or OPENAI_API_KEY)
-python3 scripts/scan.py \
+# OpenClaw 用户
+clawhub install deepsafe-scan
+
+# Claude Code 用户 — 把 CLAUDE.md 复制到项目根目录
+cp ~/deepsafe-scan/CLAUDE.md /your/project/
+
+# Cursor 用户 — 把 .cursorrules 复制到项目根目录
+cp ~/deepsafe-scan/.cursorrules /your/project/
+```
+
+### 方式三：完整扫描（5 模块 + LLM 分析）
+
+```bash
+python3 ~/deepsafe-scan/scripts/scan.py \
   --modules posture,skill,memory,hooks,model \
   --scan-dir . \
-  --format html \
-  --output /tmp/deepsafe-report.html
-
-# OpenClaw (auto-reads gateway config)
-python3 scripts/scan.py \
-  --openclaw-root ~/.openclaw \
   --format html \
   --output /tmp/deepsafe-report.html
 ```
