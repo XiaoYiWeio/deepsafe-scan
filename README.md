@@ -87,9 +87,9 @@ python3 ~/deepsafe-scan/scripts/scan.py --modules hooks --scan-dir ./some-repo -
 
 > Open a repo in Cursor + Claude Code → SSH key & API keys stolen in 3 seconds.
 
-<video src="https://github.com/XiaoYiWeio/deepsafe-scan/releases/download/v2.0.0-demo/demo.mp4" controls width="100%"></video>
+[![▶ Watch Demo Video](docs/logo.png)](https://xiaoyiweio.github.io/deepsafe-scan/#demo)
 
-[▶ Watch full demo video](https://github.com/XiaoYiWeio/deepsafe-scan/releases/download/v2.0.0-demo/demo.mp4)
+[▶ Watch full demo on our website](https://xiaoyiweio.github.io/deepsafe-scan/) &nbsp;|&nbsp; [Download video](https://github.com/XiaoYiWeio/deepsafe-scan/releases/download/v2.0.0-demo/demo.mp4)
 
 ---
 

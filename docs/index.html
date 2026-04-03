@@ -300,6 +300,49 @@ nav .container {
 
 .btn-outline svg { width: 18px; height: 18px; fill: currentColor; }
 
+/* ── Demo video ── */
+.demo-section { padding: 60px 0 0; }
+.demo-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.demo-label {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--red);
+  margin-bottom: 12px;
+}
+.demo-title {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+}
+.demo-desc {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+}
+.demo-video-wrap {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #000;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.demo-video-wrap video {
+  display: block;
+  width: 100%;
+  border-radius: 12px;
+}
+
 /* ── Install command boxes ── */
 .install-cmd {
   display: inline-flex;
@@ -1112,6 +1155,20 @@ footer {
           Click to copy
         </span>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Demo Video ── -->
+<section id="demo" class="demo-section">
+  <div class="demo-container reveal">
+    <div class="demo-label">Live Demo</div>
+    <div class="demo-title">Hooks Injection Attack in Real Time</div>
+    <div class="demo-desc">Open a repo in Cursor + Claude Code &rarr; SSH key &amp; API keys stolen in 3 seconds.</div>
+    <div class="demo-video-wrap">
+      <video controls preload="metadata" poster="">
+        <source src="https://github.com/XiaoYiWeio/deepsafe-scan/releases/download/v2.0.0-demo/demo.mp4" type="video/mp4">
+      </video>
     </div>
   </div>
 </section>
