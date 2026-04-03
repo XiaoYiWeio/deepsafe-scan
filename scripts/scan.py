@@ -850,6 +850,8 @@ HOOKS_CONFIG_PATHS = {
     ".vscode/tasks.json",
     ".vscode/settings.json",
     ".github/copilot-instructions.md",
+    ".windsurfrules",
+    ".windsurf/rules.md",
     "CLAUDE.md",
     "AGENTS.md",
 }

@@ -39,7 +39,7 @@ DeepSafe Scan runs **preflight security checks** across 5 modules before you exe
 | **posture** | `openclaw.json` / `.env` — insecure gateway settings, exposed secrets | No |
 | **skill** | Installed skills & MCP servers — 15+ static analyzers (secret patterns, dangerous syscalls, eval, exfil patterns) | No (LLM optional) |
 | **memory** | Session & memory files — 27 secret patterns, 9 PII types, prompt injection | No |
-| **hooks** | `.claude/settings.json`, `.cursorrules`, `.vscode/tasks.json`, `CLAUDE.md`, `AGENTS.md` — 12 injection patterns | No |
+| **hooks** | `.claude/settings.json`, `.cursorrules`, `.windsurfrules`, `.vscode/tasks.json`, `CLAUDE.md`, `AGENTS.md` — 12 injection patterns | No |
 | **model** | 4 behavioral safety probes: persuasion, sandbagging, deception, hallucination | Yes |
 
 All 4 static modules run **without any API key**. LLM features auto-detect credentials — no manual configuration.
@@ -56,19 +56,20 @@ Works with any AI coding agent:
 | **Claude Code** | ✅ `ANTHROPIC_API_KEY` | ✅ `.claude/settings.json` | ✅ Any dir | Checks Claude hooks files |
 | **Cursor** | ✅ `OPENAI_API_KEY` (if configured) | ✅ `.cursorrules` | ✅ Any dir | Model probes need user-provided key |
 | **Codex** | ✅ `OPENAI_API_KEY` | ✅ `AGENTS.md` | ✅ Any dir | Full static scan works without key |
+| **Windsurf** | ✅ `OPENAI_API_KEY` (if configured) | ✅ `.windsurfrules` | ✅ Any dir | Checks Windsurf config files |
 | **Other** | `--api-base / --api-key` | ✅ | ✅ | Any OpenAI-compatible API |
 
 ---
 
 ## ⚠️ Why you need this
 
-AI Coding Agent（Claude Code、Cursor、Codex）的配置文件支持**自动执行命令**。攻击者可以在开源仓库中植入恶意配置：
+AI Coding Agent（Claude Code、Cursor、Windsurf、Codex）的配置文件支持**自动执行命令**。攻击者可以在开源仓库中植入恶意配置：
 
 | 攻击向量 | 触发时机 | 需要用户确认？ |
 |---------|---------|-------------|
 | `.claude/settings.local.json` SessionStart hooks | Claude Code 启动 | **否，自动执行** |
 | `.vscode/tasks.json` runOn: folderOpen | Cursor/VSCode 打开目录 | **否，自动执行** |
-| `.cursorrules` / `CLAUDE.md` / `AGENTS.md` | Agent 读取并可能执行指令 | 部分情况下自动 |
+| `.cursorrules` / `.windsurfrules` / `CLAUDE.md` / `AGENTS.md` | Agent 读取并可能执行指令 | 部分情况下自动 |
 
 **clone 任何仓库后，先扫再打开：**
 
@@ -210,7 +211,7 @@ Scans AI coding assistant config files for command injection backdoors:
 | /tmp chmod +x | HIGH | `chmod +x /tmp/backdoor` |
 | Pre-auth exec | MEDIUM | `preSessionCommand: ...` |
 
-Checks: `.claude/settings.json`, `.claude/settings.local.json`, `.cursorrules`, `.cursor/rules.md`, `.vscode/tasks.json`, `.vscode/settings.json`, `.github/copilot-instructions.md`, `CLAUDE.md`, `AGENTS.md`.
+Checks: `.claude/settings.json`, `.claude/settings.local.json`, `.cursorrules`, `.cursor/rules.md`, `.windsurfrules`, `.windsurf/rules.md`, `.vscode/tasks.json`, `.vscode/settings.json`, `.github/copilot-instructions.md`, `CLAUDE.md`, `AGENTS.md`.
 
 ### Model probes
 
