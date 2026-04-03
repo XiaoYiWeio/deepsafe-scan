@@ -1163,18 +1163,23 @@ def generate_json_report(modules: list[ModuleResult], total_score: int) -> dict:
 
 def _svg_gauge(score: int, size: int = 160) -> str:
     """SVG donut gauge with animated stroke."""
-    r = (size - 16) // 2
+    stroke_w = max(6, size // 16)
+    r = (size - stroke_w * 2) // 2
     circumference = 2 * 3.14159 * r
     offset = circumference * (1 - score / 100)
     c = "#22c55e" if score >= 85 else "#eab308" if score >= 65 else "#f97316" if score >= 40 else "#ef4444"
+    fs_score = max(18, size * 24 // 100)
+    fs_label = max(8, size * 7 // 100)
+    cx = size // 2
+    cy = size // 2
     return (
         f'<svg width="{size}" height="{size}" viewBox="0 0 {size} {size}">'
-        f'<circle cx="{size//2}" cy="{size//2}" r="{r}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>'
-        f'<circle cx="{size//2}" cy="{size//2}" r="{r}" fill="none" stroke="{c}" stroke-width="10" '
+        f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="{stroke_w}"/>'
+        f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="{c}" stroke-width="{stroke_w}" '
         f'stroke-linecap="round" stroke-dasharray="{circumference}" stroke-dashoffset="{offset}" '
-        f'transform="rotate(-90 {size//2} {size//2})" style="transition:stroke-dashoffset 1.5s ease-out"/>'
-        f'<text x="{size//2}" y="{size//2-6}" text-anchor="middle" fill="{c}" font-size="36" font-weight="800">{score}</text>'
-        f'<text x="{size//2}" y="{size//2+14}" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="11">out of 100</text>'
+        f'transform="rotate(-90 {cx} {cy})" style="transition:stroke-dashoffset 1.5s ease-out"/>'
+        f'<text x="{cx}" y="{cy - fs_label // 2}" text-anchor="middle" dominant-baseline="central" fill="{c}" font-size="{fs_score}" font-weight="800" font-family="-apple-system,BlinkMacSystemFont,sans-serif">{score}</text>'
+        f'<text x="{cx}" y="{cy + fs_score // 2 + fs_label}" text-anchor="middle" dominant-baseline="central" fill="rgba(255,255,255,0.35)" font-size="{fs_label}" font-family="-apple-system,BlinkMacSystemFont,sans-serif">out of 100</text>'
         f'</svg>'
     )
 
@@ -1194,9 +1199,8 @@ def generate_html_report(modules: list[ModuleResult], total_score: int) -> str:
     sidebar_links += '<a class="sidebar-link active" href="#overview">Overview</a>'
     for m in modules:
         fc = len(m.findings)
-        sidebar_links += f'<a class="sidebar-link" href="#mod-{m.name}">{mod_icons.get(m.name, "")} {m.name.title()}</a>'
-        sidebar_links += f'<span class="sidebar-sublink" onclick="document.getElementById(\'mod-{m.name}\').scrollIntoView({{behavior:\'smooth\'}})">'
-        sidebar_links += f'<span class="sidebar-sublink-count">{fc}</span></span>'
+        badge = f'<span class="sidebar-badge">{fc}</span>' if fc else ''
+        sidebar_links += f'<a class="sidebar-link" href="#mod-{m.name}">{mod_icons.get(m.name, "")} {m.name.title()}{badge}</a>'
     sidebar_links += '<a class="sidebar-link" href="#findings">All Findings</a>'
 
     # Module cards
@@ -1264,12 +1268,12 @@ def generate_html_report(modules: list[ModuleResult], total_score: int) -> str:
 body{{background:var(--bg);background-image:radial-gradient(ellipse 80% 60% at 70% 20%,rgba(59,130,246,0.04),transparent),radial-gradient(ellipse 60% 50% at 30% 70%,rgba(139,92,246,0.03),transparent);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}}
 .sidebar{{position:fixed;top:0;left:0;width:200px;height:100vh;background:rgba(15,23,42,0.95);backdrop-filter:blur(12px);border-right:1px solid var(--border);padding:24px 16px;z-index:100;display:flex;flex-direction:column;gap:4px;overflow-y:auto}}
 .sidebar-title{{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.3);margin-bottom:12px;font-weight:600}}
-.sidebar-link{{display:block;padding:8px 12px;border-radius:8px;font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:all .2s}}
+.sidebar-link{{display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:all .2s}}
 .sidebar-link:hover{{color:rgba(255,255,255,0.9);background:rgba(255,255,255,0.06)}}
 .sidebar-link.active{{color:#60a5fa;background:rgba(96,165,250,0.1);font-weight:600}}
-.sidebar-sublink{{display:flex;padding:5px 12px 5px 24px;font-size:12px;color:rgba(255,255,255,0.4);cursor:pointer}}
-.sidebar-sublink-count{{margin-left:auto;font-size:10px;font-weight:700;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.35);padding:1px 5px;border-radius:8px}}
-.main{{margin-left:200px;padding:40px 48px;max-width:1000px}}
+.sidebar-badge{{margin-left:auto;font-size:10px;font-weight:700;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);padding:2px 8px;border-radius:10px;min-width:24px;text-align:center}}
+.main{{margin-left:200px;padding:40px 48px;max-width:100%;box-sizing:border-box}}
+.main-inner{{max-width:900px;margin:0 auto}}
 .hero{{text-align:center;padding:40px 0}}
 .hero h1{{font-size:28px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
 .hero .subtitle{{color:var(--muted);font-size:13px;margin-top:8px}}
@@ -1313,6 +1317,7 @@ body{{background:var(--bg);background-image:radial-gradient(ellipse 80% 60% at 7
 {sidebar_links}
 </nav>
 <div class="main">
+<div class="main-inner">
 <div class="hero" id="overview">
 <h1>DeepSafe Security Report</h1>
 <p class="subtitle">{now}</p>
@@ -1326,6 +1331,7 @@ body{{background:var(--bg);background-image:radial-gradient(ellipse 80% 60% at 7
 {findings_html}
 <div class="footer">
 Generated by deepsafe-scan skill &middot; Powered by <a href="https://github.com/XiaoYiWeio/DeepSafe">DeepSafe</a>
+</div>
 </div>
 </div>
 <script>
