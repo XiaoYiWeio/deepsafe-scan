@@ -25,7 +25,8 @@
   <img src="docs/openclaw.svg" alt="OpenClaw" width="48" valign="middle">&nbsp;<strong>OpenClaw</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="docs/claudecode-color.svg" alt="Claude Code" width="40" valign="middle">&nbsp;<strong>Claude Code</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="docs/cursor.svg" alt="Cursor" width="40" valign="middle">&nbsp;<strong>Cursor</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="docs/codex-color.svg" alt="Codex" width="40" valign="middle">&nbsp;<strong>Codex</strong>
+  <img src="docs/codex-color.svg" alt="Codex" width="40" valign="middle">&nbsp;<strong>Codex</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/opencode-color.svg" alt="OpenCode" width="40" valign="middle">&nbsp;<strong>OpenCode</strong>
 </p>
 
 ---
@@ -39,7 +40,7 @@ DeepSafe Scan runs **preflight security checks** across 5 modules before you exe
 | **posture** | `openclaw.json` / `.env` — insecure gateway settings, exposed secrets | No |
 | **skill** | Installed skills & MCP servers — 15+ static analyzers (secret patterns, dangerous syscalls, eval, exfil patterns) | No (LLM optional) |
 | **memory** | Session & memory files — 27 secret patterns, 9 PII types, prompt injection | No |
-| **hooks** | `.claude/settings.json`, `.cursorrules`, `.windsurfrules`, `.vscode/tasks.json`, `CLAUDE.md`, `AGENTS.md` — 12 injection patterns | No |
+| **hooks** | `.claude/settings.json`, `.cursorrules`, `.windsurfrules`, `opencode.json`, `.opencode/agents/`, `.vscode/tasks.json`, `CLAUDE.md`, `AGENTS.md` — 12 injection patterns | No |
 | **model** | 4 behavioral safety probes: persuasion, sandbagging, deception, hallucination | Yes |
 
 All 4 static modules run **without any API key**. LLM features auto-detect credentials — no manual configuration.
@@ -57,6 +58,7 @@ Works with any AI coding agent:
 | **Cursor** | ✅ `OPENAI_API_KEY` (if configured) | ✅ `.cursorrules` | ✅ Any dir | Model probes need user-provided key |
 | **Codex** | ✅ `OPENAI_API_KEY` | ✅ `AGENTS.md` | ✅ Any dir | Full static scan works without key |
 | **Windsurf** | ✅ `OPENAI_API_KEY` (if configured) | ✅ `.windsurfrules` | ✅ Any dir | Checks Windsurf config files |
+| **OpenCode** | ✅ `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` | ✅ `opencode.json`, `.opencode/` | ✅ Any dir | Checks OpenCode config, agents, and commands |
 | **Other** | `--api-base / --api-key` | ✅ | ✅ | Any OpenAI-compatible API |
 
 ---
@@ -69,7 +71,7 @@ AI Coding Agent（Claude Code、Cursor、Windsurf、Codex）的配置文件支�
 |---------|---------|-------------|
 | `.claude/settings.local.json` SessionStart hooks | Claude Code 启动 | **否，自动执行** |
 | `.vscode/tasks.json` runOn: folderOpen | Cursor/VSCode 打开目录 | **否，自动执行** |
-| `.cursorrules` / `.windsurfrules` / `CLAUDE.md` / `AGENTS.md` | Agent 读取并可能执行指令 | 部分情况下自动 |
+| `.cursorrules` / `.windsurfrules` / `opencode.json` / `CLAUDE.md` / `AGENTS.md` | Agent 读取并可能执行指令 | 部分情况下自动 |
 
 **clone 任何仓库后，先扫再打开：**
 
@@ -125,6 +127,9 @@ cp ~/deepsafe-scan/CLAUDE.md /your/project/
 
 # Cursor 用户 — 把 .cursorrules 复制到项目根目录
 cp ~/deepsafe-scan/.cursorrules /your/project/
+
+# OpenCode 用户 — 把 AGENTS.md 复制到项目根目录（OpenCode 原生支持 AGENTS.md）
+cp ~/deepsafe-scan/AGENTS.md /your/project/
 ```
 
 ### 方式三：完整扫描（5 模块 + LLM 分析）
@@ -221,7 +226,7 @@ Scans AI coding assistant config files for command injection backdoors:
 | /tmp chmod +x | HIGH | `chmod +x /tmp/backdoor` |
 | Pre-auth exec | MEDIUM | `preSessionCommand: ...` |
 
-Checks: `.claude/settings.json`, `.claude/settings.local.json`, `.cursorrules`, `.cursor/rules.md`, `.windsurfrules`, `.windsurf/rules.md`, `.vscode/tasks.json`, `.vscode/settings.json`, `.github/copilot-instructions.md`, `CLAUDE.md`, `AGENTS.md`.
+Checks: `.claude/settings.json`, `.claude/settings.local.json`, `.cursorrules`, `.cursor/rules.md`, `.windsurfrules`, `.windsurf/rules.md`, `opencode.json`, `opencode.jsonc`, `.opencode/agents/build.md`, `.opencode/agents/plan.md`, `.opencode/commands/test.md`, `.vscode/tasks.json`, `.vscode/settings.json`, `.github/copilot-instructions.md`, `CLAUDE.md`, `AGENTS.md`.
 
 ### Model probes
 
@@ -296,7 +301,7 @@ deepsafe-scan/
 │   └── plan-cross-platform-evolution.md  # Architecture plan
 ├── SKILL.md                  # OpenClaw skill metadata
 ├── CLAUDE.md                 # Claude Code integration guide
-├── AGENTS.md                 # Universal agent integration guide
+├── AGENTS.md                 # Universal agent integration guide (also used by OpenCode)
 └── .cursorrules              # Cursor IDE integration
 ```
 

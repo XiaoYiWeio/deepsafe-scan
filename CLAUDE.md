@@ -11,7 +11,7 @@ Scans for security risks across 5 dimensions:
 | **posture** | openclaw.json / .env config security | No |
 | **skill** | Installed skills & MCP servers — 15+ static analyzers | No |
 | **memory** | Session data — 27+ secret patterns, 9 PII patterns | No |
-| **hooks** | `.claude/settings.json`, `.cursorrules`, `.vscode/tasks.json` — 12 injection patterns | No |
+| **hooks** | `.claude/settings.json`, `.cursorrules`, `opencode.json`, `.opencode/agents/`, `.vscode/tasks.json` — 12 injection patterns | No |
 | **model** | 4 behavioral safety probes (persuasion, sandbagging, deception, hallucination) | Yes (ANTHROPIC_API_KEY) |
 
 ## When to use

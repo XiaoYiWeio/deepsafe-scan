@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DeepSafe Scan — Preflight Security Scanner for AI Coding Agents</title>
-<meta name="description" content="Universal preflight security scanner for AI coding agents. Detects hooks injection, credential exfiltration, and backdoors in .cursorrules, CLAUDE.md, and agent configs.">
+<meta name="description" content="Universal preflight security scanner for AI coding agents. Detects hooks injection, credential exfiltration, and backdoors in .cursorrules, CLAUDE.md, opencode.json, and agent configs.">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1103,7 +1103,7 @@ footer {
 
     <h1 class="reveal reveal-delay-2">Scan before you run.</h1>
 
-    <p class="reveal reveal-delay-2">Preflight security scanner for AI coding agents. Detects hooks injection, credential exfiltration, and backdoors in <code style="background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.85em">.cursorrules</code>, <code style="background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.85em">CLAUDE.md</code>, and agent configs &mdash; before they compromise your environment.</p>
+    <p class="reveal reveal-delay-2">Preflight security scanner for AI coding agents. Detects hooks injection, credential exfiltration, and backdoors in <code style="background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.85em">.cursorrules</code>, <code style="background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.85em">CLAUDE.md</code>, <code style="background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.85em">opencode.json</code>, and agent configs &mdash; before they compromise your environment.</p>
 
     <div class="platform-strip reveal reveal-delay-2">
       <span class="platform-strip-label">Works with:</span>
@@ -1122,6 +1122,10 @@ footer {
       <span class="platform-chip">
         <img src="codex-color.svg" alt="Codex" style="width:18px;height:18px">
         Codex
+      </span>
+      <span class="platform-chip">
+        <img src="opencode-color.svg" alt="OpenCode" style="width:18px;height:18px">
+        OpenCode
       </span>
     </div>
 
@@ -1224,7 +1228,7 @@ footer {
           <h3>Hooks Injection Detection</h3>
           <span class="new-badge">New in v2.0</span>
         </div>
-        <p>12 injection patterns across AI agent config files: <code style="background:rgba(239,68,68,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fca5a5">.cursorrules</code>, <code style="background:rgba(239,68,68,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fca5a5">CLAUDE.md</code>, <code style="background:rgba(239,68,68,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fca5a5">.claude/settings.local.json</code>, <code style="background:rgba(239,68,68,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fca5a5">AGENTS.md</code>, and more. Catches the attacks that actually compromise developer machines.</p>
+        <p>12 injection patterns across AI agent config files: <code style="background:rgba(239,68,68,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fca5a5">.cursorrules</code>, <code style="background:rgba(239,68,68,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fca5a5">CLAUDE.md</code>, <code style="background:rgba(239,68,68,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fca5a5">.claude/settings.local.json</code>, <code style="background:rgba(239,68,68,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fca5a5">opencode.json</code>, <code style="background:rgba(239,68,68,0.1);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fca5a5">AGENTS.md</code>, and more. Catches the attacks that actually compromise developer machines.</p>
         <div class="dim-tags">
           <span class="dim-tag dim-tag--danger">Reverse Shell</span>
           <span class="dim-tag dim-tag--danger">curl|sh RCE</span>
@@ -1298,7 +1302,7 @@ footer {
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label">Platform Support</div>
-      <h2 class="section-title">One scanner. Four platforms.</h2>
+      <h2 class="section-title">One scanner. Five platforms.</h2>
       <p class="section-desc">Auto-detects your environment and API credentials. Install once, scan everywhere.</p>
     </div>
 
@@ -1330,6 +1334,13 @@ footer {
         </div>
         <h3>Codex</h3>
         <p>Auto-detects OPENAI_API_KEY. Scans AGENTS.md for injection patterns.</p>
+      </div>
+      <div class="platform-card reveal reveal-delay-5">
+        <div class="platform-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l10-8 10 8"/><path d="M4 10v10a1 1 0 001 1h14a1 1 0 001-1V10"/><path d="M9 21v-6h6v6"/></svg>
+        </div>
+        <h3>OpenCode</h3>
+        <p>Scans opencode.json, .opencode/agents/, and AGENTS.md for injection patterns.</p>
       </div>
     </div>
   </div>
