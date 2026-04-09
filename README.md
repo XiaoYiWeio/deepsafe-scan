@@ -25,6 +25,10 @@
   <em>运行前先扫描。一条命令，保护你的 AI Agent 环境免受密钥泄露、提示词注入、Hooks 后门攻击。</em>
 </p>
 
+<p align="center">
+  想了解这些攻击是怎么运作的？→ <a href="https://github.com/XiaoYiWeio/ai-agent-attack-techniques"><strong>AI Agent Attack Techniques</strong></a>
+</p>
+
 ---
 
 <p align="center">
@@ -286,6 +290,14 @@ OPENAI_API_KEY 环境变量
 ```
 
 **Cursor 用户**：Cursor 通过订阅内部管理 LLM 鉴权，API Key 不暴露给子进程。如需启用 Model 探测，请在 Shell 中设置 `OPENAI_API_KEY` 或传入 `--api-key`。所有静态模块无需任何 Key。
+
+---
+
+## 相关项目
+
+| 项目 | 定位 |
+|------|------|
+| **[ai-agent-attack-techniques](https://github.com/XiaoYiWeio/ai-agent-attack-techniques)** | 攻击技术参考手册 — 记录 deepsafe-scan 所检测的攻击的具体原理和 PoC |
 
 ---
 
