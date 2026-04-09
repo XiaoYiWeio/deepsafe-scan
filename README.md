@@ -25,8 +25,19 @@
   <em>运行前先扫描。一条命令，保护你的 AI Agent 环境免受密钥泄露、提示词注入、Hooks 后门攻击。</em>
 </p>
 
+---
+
 <p align="center">
-  <img src="docs/demo.gif" alt="DeepSafe Scan Demo" width="800">
+  <strong>⚡ 攻击者只需 3 秒，就能从你的 AI Agent 环境中窃走 SSH Key、API Key 和全部敏感凭证。</strong><br>
+  <sub>↓ 真实攻击演示（3 倍加速）&nbsp;·&nbsp;<a href="https://xiaoyiweio.github.io/deepsafe-scan/#demo">观看完整原速视频 →</a></sub>
+</p>
+
+<p align="center">
+  <img src="docs/demo.gif" alt="3秒窃取你的全部凭证 - DeepSafe Scan 攻击演示" width="800">
+</p>
+
+<p align="center">
+  <sub>你 clone 的下一个仓库，可能已经在等你打开它了。</sub>
 </p>
 
 ---
@@ -67,36 +78,34 @@ AI 编程 Agent（Claude Code、Cursor、Windsurf、Codex）的配置文件支�
 | `.vscode/tasks.json` runOn: folderOpen | Cursor/VSCode 打开目录 | **否，自动执行** |
 | `.cursorrules` / `.windsurfrules` / `CLAUDE.md` / `AGENTS.md` | Agent 读取并可能执行指令 | 部分情况下自动 |
 
-**clone 任何仓库后，先扫再打开：**
-
-```bash
-# 先 clone 到本地
-git clone https://github.com/someone/some-repo
-# 不要急着用 IDE 打开！先扫一下：
-python3 ~/deepsafe-scan/scripts/scan.py --modules hooks --scan-dir ./some-repo --no-llm --format markdown
-# 确认安全后再打开 IDE
-```
-
----
-
-## 演示：Hooks 注入攻击实时展示
-
-> 用 Cursor + Claude Code 打开一个仓库 → SSH Key 和 API Key 在 3 秒内被窃取。
-
-[![▶ 观看演示视频](docs/logo.png)](https://xiaoyiweio.github.io/deepsafe-scan/#demo)
-
-[▶ 在官网观看完整演示](https://xiaoyiweio.github.io/deepsafe-scan/) &nbsp;|&nbsp; [下载视频](https://github.com/XiaoYiWeio/deepsafe-scan/releases/download/v2.0.0-demo/demo.mp4)
-
 ---
 
 ## 快速开始
 
-### 方式一：作为独立工具使用
+**一行安装，一句话使用，从此 clone 不再裸奔。**
+
+### 方式一：作为 AI Agent Skill 安装（推荐）
+
+```bash
+clawhub install deepsafe-scan
+```
+
+安装后，直接用自然语言告诉你的 AI Agent：
+
+> "帮我用 deepsafe scan 扫一下这个项目"
+
+Agent 自动扫描并返回报告，**无需记任何命令**。
+
+> Claude Code 用户 — 把 `CLAUDE.md` 复制到项目根目录即可集成：
+> ```bash
+> cp ~/deepsafe-scan/CLAUDE.md /your/project/
+> ```
+
+### 方式二：作为独立命令行工具
 
 ```bash
 git clone https://github.com/XiaoYiWeio/deepsafe-scan ~/deepsafe-scan
 
-# 扫描任意项目目录（零依赖，直接跑）
 python3 ~/deepsafe-scan/scripts/scan.py \
   --modules hooks \
   --scan-dir /path/to/repo \
@@ -104,66 +113,48 @@ python3 ~/deepsafe-scan/scripts/scan.py \
   --format markdown
 ```
 
-### 方式二：作为 AI Agent Skill 安装（推荐）
+---
 
-安装为 Skill 后，以后每次使用只需**用自然语言告诉你的 AI Agent**：
+## 零依赖
 
-> "帮我用 deepsafe scan 扫一下这个项目"
+Python 核心仅使用标准库：`urllib`、`json`、`re`、`hashlib`、`subprocess`、`concurrent.futures`、`argparse`、`dataclasses`。
 
-Agent 会自动调用扫描器并返回结果，无需记命令。
-
-```bash
-# OpenClaw 用户
-clawhub install deepsafe-scan
-
-# Claude Code 用户 — 把 CLAUDE.md 复制到项目根目录
-cp ~/deepsafe-scan/CLAUDE.md /your/project/
-
-# Cursor 用户 — 把 .cursorrules 复制到项目根目录
-cp ~/deepsafe-scan/.cursorrules /your/project/
-```
-
-### 方式三：完整扫描（5 模块 + LLM 分析）
-
-```bash
-python3 ~/deepsafe-scan/scripts/scan.py \
-  --modules posture,skill,memory,hooks,model \
-  --scan-dir . \
-  --format html \
-  --output /tmp/deepsafe-report.html
-```
+**无需 `pip install`。**
 
 ---
 
-## 使用方法
+## 平台支持
+
+| 平台 | API 自动检测 | Hooks 扫描 | Skills 扫描 | 说明 |
+|------|------------|-----------|------------|------|
+| **OpenClaw** | ✅ 读取 `~/.openclaw/openclaw.json` | ✅ | ✅ | 完整原生支持 |
+| **Claude Code** | ✅ `ANTHROPIC_API_KEY` | ✅ `.claude/settings.json` | ✅ 任意目录 | 检查 Claude Hooks 文件 |
+| **Cursor** | ✅ `OPENAI_API_KEY`（如已配置）| ✅ `.cursorrules` | ✅ 任意目录 | Model 探测需用户提供 Key |
+| **Codex** | ✅ `OPENAI_API_KEY` | ✅ `AGENTS.md` | ✅ 任意目录 | 无 Key 可完整静态扫描 |
+| **Windsurf** | ✅ `OPENAI_API_KEY`（如已配置）| ✅ `.windsurfrules` | ✅ 任意目录 | 检查 Windsurf 配置文件 |
+| **其他** | `--api-base / --api-key` | ✅ | ✅ | 兼容任何 OpenAI 格式 API |
+
+---
+
+## 项目结构
 
 ```
-python3 scripts/scan.py [选项]
-
-核心选项：
-  --modules           逗号分隔：posture,skill,memory,hooks,model
-                      （默认：posture,skill,memory,model）
-  --scan-dir PATH     额外扫描目录（默认：自动检测）
-  --openclaw-root     OpenClaw 根目录（默认：~/.openclaw）
-
-LLM 选项：
-  --api-base URL      兼容 OpenAI 格式的 API 地址
-  --api-key KEY       API Key（也读取 ANTHROPIC_API_KEY / OPENAI_API_KEY）
-  --provider          auto | openai | anthropic（默认：auto）
-  --model             模型名称覆盖
-  --no-llm            禁用所有 LLM 功能（仅静态分析）
-
-输出选项：
-  --format            json | markdown | html（默认：json）
-  --output FILE       将报告写入文件而非标准输出
-  --profile           quick | standard | full（默认：quick）
-
-缓存选项：
-  --ttl-days N        缓存有效期（天，默认：7，0 = 不缓存）
-  --no-cache          跳过缓存
-
-调试：
-  --debug             输出详细日志到 stderr
+deepsafe-scan/
+├── scripts/
+│   ├── scan.py              # 主入口（5 模块，HTML/markdown/JSON 输出）
+│   ├── llm_client.py        # 多平台 LLM 客户端（零依赖，自动检测）
+│   └── probes/
+│       ├── persuasion_probe.py    # 操纵诱导评估
+│       ├── sandbagging_probe.py   # 能力隐藏评估
+│       ├── deception_probe.py     # 欺骗性回答基准
+│       └── halueval_probe.py      # HaluEval 幻觉评估
+├── data/
+│   ├── prompts.json          # 探测提示词模板（外部化）
+│   └── datasets/             # 探测评估数据集
+├── SKILL.md                  # OpenClaw Skill 元数据
+├── CLAUDE.md                 # Claude Code 集成说明
+├── AGENTS.md                 # 通用 Agent 集成说明
+└── .cursorrules              # Cursor IDE 集成
 ```
 
 ---
@@ -234,6 +225,39 @@ OpenClaw 用户读取 `openclaw.json`，其他平台检查 `.env`、`config.json
 
 ---
 
+## 完整 CLI 选项
+
+```
+python3 scripts/scan.py [选项]
+
+核心选项：
+  --modules           逗号分隔：posture,skill,memory,hooks,model
+                      （默认：posture,skill,memory,model）
+  --scan-dir PATH     额外扫描目录（默认：自动检测）
+  --openclaw-root     OpenClaw 根目录（默认：~/.openclaw）
+
+LLM 选项：
+  --api-base URL      兼容 OpenAI 格式的 API 地址
+  --api-key KEY       API Key（也读取 ANTHROPIC_API_KEY / OPENAI_API_KEY）
+  --provider          auto | openai | anthropic（默认：auto）
+  --model             模型名称覆盖
+  --no-llm            禁用所有 LLM 功能（仅静态分析）
+
+输出选项：
+  --format            json | markdown | html（默认：json）
+  --output FILE       将报告写入文件而非标准输出
+  --profile           quick | standard | full（默认：quick）
+
+缓存选项：
+  --ttl-days N        缓存有效期（天，默认：7，0 = 不缓存）
+  --no-cache          跳过缓存
+
+调试：
+  --debug             输出详细日志到 stderr
+```
+
+---
+
 ## 评分标准
 
 | 总分 | 风险等级 | 建议操作 |
@@ -262,52 +286,6 @@ OPENAI_API_KEY 环境变量
 ```
 
 **Cursor 用户**：Cursor 通过订阅内部管理 LLM 鉴权，API Key 不暴露给子进程。如需启用 Model 探测，请在 Shell 中设置 `OPENAI_API_KEY` 或传入 `--api-key`。所有静态模块无需任何 Key。
-
----
-
-## 零依赖
-
-Python 核心仅使用标准库：`urllib`、`json`、`re`、`hashlib`、`subprocess`、`concurrent.futures`、`argparse`、`dataclasses`。
-
-**无需 `pip install`。**
-
----
-
-## 平台支持
-
-| 平台 | API 自动检测 | Hooks 扫描 | Skills 扫描 | 说明 |
-|------|------------|-----------|------------|------|
-| **OpenClaw** | ✅ 读取 `~/.openclaw/openclaw.json` | ✅ | ✅ | 完整原生支持 |
-| **Claude Code** | ✅ `ANTHROPIC_API_KEY` | ✅ `.claude/settings.json` | ✅ 任意目录 | 检查 Claude Hooks 文件 |
-| **Cursor** | ✅ `OPENAI_API_KEY`（如已配置）| ✅ `.cursorrules` | ✅ 任意目录 | Model 探测需用户提供 Key |
-| **Codex** | ✅ `OPENAI_API_KEY` | ✅ `AGENTS.md` | ✅ 任意目录 | 无 Key 可完整静态扫描 |
-| **Windsurf** | ✅ `OPENAI_API_KEY`（如已配置）| ✅ `.windsurfrules` | ✅ 任意目录 | 检查 Windsurf 配置文件 |
-| **其他** | `--api-base / --api-key` | ✅ | ✅ | 兼容任何 OpenAI 格式 API |
-
----
-
-## 项目结构
-
-```
-deepsafe-scan/
-├── scripts/
-│   ├── scan.py              # 主入口（5 模块，HTML/markdown/JSON 输出）
-│   ├── llm_client.py        # 多平台 LLM 客户端（零依赖，自动检测）
-│   └── probes/
-│       ├── persuasion_probe.py    # 操纵诱导评估
-│       ├── sandbagging_probe.py   # 能力隐藏评估
-│       ├── deception_probe.py     # 欺骗性回答基准
-│       └── halueval_probe.py      # HaluEval 幻觉评估
-├── data/
-│   ├── prompts.json          # 探测提示词模板（外部化）
-│   └── datasets/             # 探测评估数据集
-├── docs/
-│   └── plan-cross-platform-evolution.md
-├── SKILL.md                  # OpenClaw Skill 元数据
-├── CLAUDE.md                 # Claude Code 集成说明
-├── AGENTS.md                 # 通用 Agent 集成说明
-└── .cursorrules              # Cursor IDE 集成
-```
 
 ---
 
