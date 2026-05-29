@@ -18,7 +18,7 @@ python3 scripts/scan.py --modules posture,skill,memory,hooks,model --scan-dir . 
 ## When to suggest scanning
 
 - User installs a new MCP server or Cursor extension
-- User clones a project with .cursorrules or agent config files
+- User clones a project with .cursorrules, opencode.json, or agent config files
 - User asks about security of their AI setup
 - User reports unexpected AI behavior that might indicate injection
 

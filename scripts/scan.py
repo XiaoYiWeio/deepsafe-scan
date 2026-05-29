@@ -852,13 +852,26 @@ HOOKS_CONFIG_PATHS = {
     ".github/copilot-instructions.md",
     ".windsurfrules",
     ".windsurf/rules.md",
+    "opencode.json",
+    "opencode.jsonc",
     "CLAUDE.md",
     "AGENTS.md",
 }
 
+HOOKS_CONFIG_DIRS = {
+    ".opencode/agents",
+    ".opencode/commands",
+}
 
 _HOOKS_BASENAMES = {os.path.basename(p) for p in HOOKS_CONFIG_PATHS}
 _HOOKS_RELPATHS = set(HOOKS_CONFIG_PATHS)
+
+
+def _is_hooks_config(rel: str, fname: str) -> bool:
+    rel_norm = rel.replace(os.sep, "/")
+    if rel_norm in _HOOKS_RELPATHS or fname in _HOOKS_BASENAMES:
+        return True
+    return any(rel_norm.startswith(f"{d}/") for d in HOOKS_CONFIG_DIRS)
 
 
 def run_hooks_scan(scan_dir: str) -> ModuleResult:
@@ -876,12 +889,13 @@ def run_hooks_scan(scan_dir: str) -> ModuleResult:
 
     for dirpath, dirs, filenames in os.walk(scan_dir):
         dirs[:] = [d for d in dirs
-                   if d in (".claude", ".vscode", ".github", ".cursor")
+                   if d in (".claude", ".vscode", ".github", ".cursor",
+                            ".windsurf", ".opencode")
                    or not d.startswith(".")]
         for fname in filenames:
             fpath = os.path.join(dirpath, fname)
             rel = os.path.relpath(fpath, scan_dir)
-            if rel not in _HOOKS_RELPATHS and fname not in _HOOKS_BASENAMES:
+            if not _is_hooks_config(rel, fname):
                 continue
             if fpath in scanned:
                 continue

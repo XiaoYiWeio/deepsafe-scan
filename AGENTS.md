@@ -1,12 +1,12 @@
 # DeepSafe Scan — Agent Instructions
 
 This is the **deepsafe-scan** security scanner for AI agent environments.
-Works with: OpenClaw, Claude Code, Cursor, Codex, and any AI agent.
+Works with: OpenClaw, Claude Code, Cursor, Codex, OpenCode, and any AI agent.
 
 ## What this tool does
 
 Scans for security risks in:
-- AI agent config files (`.claude/settings.json`, `.cursorrules`, `.vscode/tasks.json`, etc.)
+- AI agent config files (`.claude/settings.json`, `.cursorrules`, `opencode.json`, `.opencode/agents/`, `.vscode/tasks.json`, etc.)
 - Installed skills and MCP servers
 - Session/memory data for leaked secrets and PII
 - Deployment configuration

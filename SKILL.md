@@ -1,6 +1,6 @@
 ---
 name: deepsafe-scan
-description: "Preflight security scanner for AI coding agents — scans deployment config, skills/MCP servers, memory/sessions, and AI agent config files (hooks injection) for secrets, PII, prompt injection, and dangerous patterns. Runs 4 model behavior probes (persuasion, sandbagging, deception, hallucination). Supports LLM-enhanced semantic analysis. Works with OpenClaw, Claude Code, Cursor, and Codex. Use when a user asks for a security audit, health check, or wants to scan their AI agent setup for vulnerabilities."
+description: "Preflight security scanner for AI coding agents — scans deployment config, skills/MCP servers, memory/sessions, and AI agent config files (hooks injection) for secrets, PII, prompt injection, and dangerous patterns. Runs 4 model behavior probes (persuasion, sandbagging, deception, hallucination). Supports LLM-enhanced semantic analysis. Works with OpenClaw, Claude Code, Cursor, Codex, and OpenCode. Use when a user asks for a security audit, health check, or wants to scan their AI agent setup for vulnerabilities."
 metadata:
   {
     "openclaw":
@@ -27,14 +27,14 @@ allowed-tools: Bash(python3:*), Bash(cat:*), Read
 Full-featured preflight security scanner across **5 dimensions**:
 **Posture** (config), **Skill** (skills & MCP), **Memory** (sessions), **Hooks** (agent config injection), **Model** (behavioral safety probes).
 
-Works with **OpenClaw, Claude Code, Cursor, and Codex**. LLM features auto-detect credentials — no manual configuration needed.
+Works with **OpenClaw, Claude Code, Cursor, Codex, and OpenCode**. LLM features auto-detect credentials — no manual configuration needed.
 
 ## When to Use
 
 - User asks to "scan", "audit", "check security", or "health check" their AI setup
 - User installs a new skill, MCP server, or clones a project with agent configs
 - User wants to know if any secrets or PII are leaked in session history
-- User asks about hooks injection risks (Claude Code settings.json, .cursorrules, etc.)
+- User asks about hooks injection risks (Claude Code settings.json, .cursorrules, opencode.json, etc.)
 - User wants to probe model behavior for manipulation, deception, or hallucination risks
 
 ## How to Run
@@ -51,14 +51,14 @@ python3 {baseDir}/scripts/scan.py --modules posture,skill,memory,hooks --scan-di
 # OpenClaw (reads gateway config automatically)
 python3 {baseDir}/scripts/scan.py --openclaw-root ~/.openclaw --format html --output /tmp/deepsafe-report.html
 
-# Claude Code / Cursor / Codex (uses ANTHROPIC_API_KEY or OPENAI_API_KEY)
+# Claude Code / Cursor / Codex / OpenCode (uses ANTHROPIC_API_KEY or OPENAI_API_KEY)
 python3 {baseDir}/scripts/scan.py --modules posture,skill,memory,hooks,model --scan-dir . --format html --output /tmp/deepsafe-report.html
 ```
 
 ### Targeted scans
 
 ```bash
-# Hooks injection only (fastest — checks .claude/settings.json, .cursorrules, etc.)
+# Hooks injection only (fastest — checks .claude/settings.json, .cursorrules, opencode.json, etc.)
 python3 {baseDir}/scripts/scan.py --modules hooks --scan-dir . --no-llm --format markdown
 
 # Memory scan only (check for leaked secrets/PII)

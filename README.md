@@ -51,7 +51,8 @@
   <img src="docs/openclaw.svg" alt="OpenClaw" width="48" valign="middle">&nbsp;<strong>OpenClaw</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="docs/claudecode-color.svg" alt="Claude Code" width="40" valign="middle">&nbsp;<strong>Claude Code</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="docs/cursor.svg" alt="Cursor" width="40" valign="middle">&nbsp;<strong>Cursor</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="docs/codex-color.svg" alt="Codex" width="40" valign="middle">&nbsp;<strong>Codex</strong>
+  <img src="docs/codex-color.svg" alt="Codex" width="40" valign="middle">&nbsp;<strong>Codex</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/opencode-color.svg" alt="OpenCode" width="40" valign="middle">&nbsp;<strong>OpenCode</strong>
 </p>
 
 ---
@@ -65,7 +66,7 @@ DeepSafe Scan 在你执行 AI 生成代码或安装新 Skills 前，对 5 个维
 | **posture** | `openclaw.json` / `.env` — 不安全的网关配置、暴露的密钥 | 否 |
 | **skill** | 已安装的 Skills 和 MCP 服务器 — 15+ 静态分析器（密钥、危险调用、eval、数据外传） | 否（LLM 可选）|
 | **memory** | 会话与记忆文件 — 27 种密钥模式、9 种 PII 类型、提示词注入 | 否 |
-| **hooks** | `.claude/settings.json`、`.cursorrules`、`.windsurfrules`、`.vscode/tasks.json`、`CLAUDE.md`、`AGENTS.md` — 12 种注入模式 | 否 |
+| **hooks** | `.claude/settings.json`、`.cursorrules`、`.windsurfrules`、`opencode.json`、`.opencode/agents/`、`.opencode/commands/`、`.vscode/tasks.json`、`CLAUDE.md`、`AGENTS.md` — 12 种注入模式 | 否 |
 | **model** | 4 项行为安全探测：操纵诱导、能力隐藏、欺骗性回答、幻觉生成 | 是 |
 
 4 个静态模块**无需任何 API Key**即可运行。LLM 功能自动检测已有凭证，无需手动配置。
@@ -80,7 +81,7 @@ AI 编程 Agent（Claude Code、Cursor、Windsurf、Codex）的配置文件支�
 |---------|---------|-------------|
 | `.claude/settings.local.json` SessionStart hooks | Claude Code 启动 | **否，自动执行** |
 | `.vscode/tasks.json` runOn: folderOpen | Cursor/VSCode 打开目录 | **否，自动执行** |
-| `.cursorrules` / `.windsurfrules` / `CLAUDE.md` / `AGENTS.md` | Agent 读取并可能执行指令 | 部分情况下自动 |
+| `.cursorrules` / `.windsurfrules` / `opencode.json` / `.opencode/agents/` / `CLAUDE.md` / `AGENTS.md` | Agent 读取并可能执行指令 | 部分情况下自动 |
 
 ---
 
@@ -136,6 +137,7 @@ Python 核心仅使用标准库：`urllib`、`json`、`re`、`hashlib`、`subpro
 | **Cursor** | ✅ `OPENAI_API_KEY`（如已配置）| ✅ `.cursorrules` | ✅ 任意目录 | Model 探测需用户提供 Key |
 | **Codex** | ✅ `OPENAI_API_KEY` | ✅ `AGENTS.md` | ✅ 任意目录 | 无 Key 可完整静态扫描 |
 | **Windsurf** | ✅ `OPENAI_API_KEY`（如已配置）| ✅ `.windsurfrules` | ✅ 任意目录 | 检查 Windsurf 配置文件 |
+| **OpenCode** | ✅ `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` | ✅ `opencode.json`、`.opencode/` | ✅ 任意目录 | 检查 OpenCode 配置、agents 和 commands |
 | **其他** | `--api-base / --api-key` | ✅ | ✅ | 兼容任何 OpenAI 格式 API |
 
 ---
@@ -212,7 +214,7 @@ OpenClaw 用户读取 `openclaw.json`，其他平台检查 `.env`、`config.json
 | /tmp chmod +x | HIGH | `chmod +x /tmp/backdoor` |
 | 预授权执行 | MEDIUM | `preSessionCommand: ...` |
 
-检查文件：`.claude/settings.json`、`.claude/settings.local.json`、`.cursorrules`、`.cursor/rules.md`、`.windsurfrules`、`.windsurf/rules.md`、`.vscode/tasks.json`、`.vscode/settings.json`、`.github/copilot-instructions.md`、`CLAUDE.md`、`AGENTS.md`。
+检查文件：`.claude/settings.json`、`.claude/settings.local.json`、`.cursorrules`、`.cursor/rules.md`、`.windsurfrules`、`.windsurf/rules.md`、`opencode.json`、`opencode.jsonc`、`.opencode/agents/`、`.opencode/commands/`、`.vscode/tasks.json`、`.vscode/settings.json`、`.github/copilot-instructions.md`、`CLAUDE.md`、`AGENTS.md`。
 
 ### Model 探测
 
